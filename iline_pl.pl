@@ -37,10 +37,16 @@ sub on_public {
 
 sub on_server_event {
     my ($server, $data, $nick, $address) = @_;
-    if ($waiting_for_stats && $data =~ /\S+ (\S+)\[\S+@(\S+)\]/ && $1 eq $requested_nick) {
-        $waiting_for_stats = 0;
-        my $host = $2;
-        get_iline($server, $target_channel, $host);
+    if ($waiting_for_stats) {
+        if ($data =~ /\S+ (\S+)\[\S+@(\S+)\]/ && $1 eq $requested_nick) {
+            $waiting_for_stats = 0;
+            my $host = $2;
+            get_iline($server, $target_channel, $host);
+        } elsif ($data =~ /\S+ (\S+)\[@(\S+)\]/ && $1 eq $requested_nick) {
+            $waiting_for_stats = 0;
+            my $host = $2;
+            get_iline($server, $target_channel, $host);
+        }
     }
 }
 
