@@ -62,22 +62,44 @@ sub is_ipv6 {
 
 sub get_iline {
     my ($server, $target, $ip) = @_;
-    my $api_url = "https://bot.ircnet.info/api/i-line?q=$ip";
-    my $response = http_get($api_url);
+    my $ircnet_api_url = "https://bot.ircnet.info/api/i-line?q=$ip";
+    my $ip_api_url = "http://ip-api.com/json/$ip?fields=status,countryCode,regionName,city,isp,org,as";
+    
+    my $iline_response = http_get($ircnet_api_url);
+    my $ip_info_response = http_get($ip_api_url);
 
-    if ($response) {
-        my $data = decode_json($response);
-        if ($data->{"status"} eq "SUCCESS") {
-            my @server_list = map { $_->{"serverName"} } @{$data->{"response"}};
+    if ($iline_response) {
+        my $iline_data = decode_json($iline_response);
+        if ($iline_data->{"status"} eq "SUCCESS") {
+            my @server_list = map { $_->{"serverName"} } @{$iline_data->{"response"}};
             my $server_str = join(', ', @server_list);
-            $server->command("MSG $target Iline dla $ip to: $server_str");
+            $server->command("MSG $target Iline for $ip is on servers: $server_str");
         } else {
-            $server->command("MSG $target Error: Unable to fetch iline data.");
+            $server->command("MSG $target Error: Could not fetch iline data.");
         }
     } else {
-        $server->command("MSG $target Error: Unable to fetch iline data.");
+        $server->command("MSG $target Error: Could not fetch iline data.");
+    }
+
+    if ($ip_info_response) {
+        my $ip_info_data = decode_json($ip_info_response);
+        if ($ip_info_data->{"status"} eq "success") {
+            my $country_code = $ip_info_data->{"countryCode"};
+            my $region_name = $ip_info_data->{"regionName"};
+            my $city = $ip_info_data->{"city"};
+            my $isp = $ip_info_data->{"isp"};
+            my $org = $ip_info_data->{"org"};
+            my $as = $ip_info_data->{"as"};
+
+            $server->command("MSG $target IP Information ($ip): Country: $country_code, Region: $region_name, City: $city, ISP: $isp, Organization: $org, AS: $as");
+        } else {
+            $server->command("MSG $target Error: Could not fetch IP information.");
+        }
+    } else {
+        $server->command("MSG $target Error: Could not fetch IP information.");
     }
 }
+
 
 sub http_get {
     my ($url) = @_;
