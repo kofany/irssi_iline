@@ -63,13 +63,16 @@ sub is_ipv6 {
 
 sub get_iline {
     my ($server, $target, $ip) = @_;
-    my $api_url = "https://bot.ircnet.info/api/i-line?q=$ip";
-    my $response = http_get($api_url);
+    my $ircnet_api_url = "https://bot.ircnet.info/api/i-line?q=$ip";
+    my $ip_api_url = "http://ip-api.com/json/$ip?fields=status,countryCode,regionName,city,isp,org,as";
+    
+    my $iline_response = http_get($ircnet_api_url);
+    my $ip_info_response = http_get($ip_api_url);
 
-    if ($response) {
-        my $data = decode_json($response);
-        if ($data->{"status"} eq "SUCCESS") {
-            my @server_list = map { $_->{"serverName"} } @{$data->{"response"}};
+    if ($iline_response) {
+        my $iline_data = decode_json($iline_response);
+        if ($iline_data->{"status"} eq "SUCCESS") {
+            my @server_list = map { $_->{"serverName"} } @{$iline_data->{"response"}};
             my $server_str = join(', ', @server_list);
             $server->command("MSG $target Iline dla $ip to: $server_str");
         } else {
@@ -78,7 +81,26 @@ sub get_iline {
     } else {
         $server->command("MSG $target Błąd: Nie udało się pobrać danych iline.");
     }
+
+    if ($ip_info_response) {
+        my $ip_info_data = decode_json($ip_info_response);
+        if ($ip_info_data->{"status"} eq "success") {
+            my $country_code = $ip_info_data->{"countryCode"};
+            my $region_name = $ip_info_data->{"regionName"};
+            my $city = $ip_info_data->{"city"};
+            my $isp = $ip_info_data->{"isp"};
+            my $org = $ip_info_data->{"org"};
+            my $as = $ip_info_data->{"as"};
+
+            $server->command("MSG $target Informacje o IP ($ip): Kraj: $country_code, Region: $region_name, Miasto: $city, ISP: $isp, Organizacja: $org, AS: $as");
+        } else {
+            $server->command("MSG $target Błąd: Nie udało się pobrać informacji o IP.");
+        }
+    } else {
+        $server->command("MSG $target Błąd: Nie udało się pobrać informacji o IP.");
+    }
 }
+
 
 sub http_get {
     my ($url) = @_;
