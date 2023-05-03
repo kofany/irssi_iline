@@ -1,8 +1,8 @@
-# Skrypt I-Line dla Irssi kożysta z api https://ircnet.info (Polski)
+### Skrypt I-Line dla Irssi kożysta z api https://ircnet.info (Polski)
 
 Ten skrypt pozwala na pobieranie informacji o I-Line dla podanego adresu IP lub nicku w kliencie IRC Irssi. Wysyła żądanie do API, a następnie wyświetla informacje o I-Line na kanale, na którym wydano polecenie.
 
-## Instalacja
+#### Instalacja
 
 1. Zapisz skrypt w katalogu `~/.irssi/scripts/`. Jeśli katalog `scripts` nie istnieje, najpierw go utwórz.
 
@@ -16,7 +16,7 @@ ln -s ~/.irssi/scripts/iline_pl.pl ~/.irssi/scripts/autorun/iline_pl.pl
 /script load iline_pl.pl
 
 
-## Użycie
+#### Użycie
 
 Na kanale wpisz:
 
@@ -30,11 +30,11 @@ lub
 Skrypt pobierze informacje o I-Line dla podanego adresu IP lub nicku i wyświetli je na kanale.
 
 
-# I-Line Script for Irssi use https://ircnet.info api (English)
+### I-Line Script for Irssi use https://ircnet.info api (English)
 
 This script allows you to get I-Line information for a given IP address or nickname in the Irssi IRC client. It sends a request to an API and then displays the I-Line information in the channel where the command was issued.
 
-## Installation
+### Installation
 
 1. Save the script to your `~/.irssi/scripts/` directory. If the `scripts` directory doesn't exist, create it first.
 
@@ -48,7 +48,7 @@ ln -s ~/.irssi/scripts/iline_en.pl ~/.irssi/scripts/autorun/iline_en.pl
 /script load iline_en.pl
 
 
-## Usage
+### Usage
 
 In a channel, type:
 
